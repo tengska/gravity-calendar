@@ -80,4 +80,9 @@ Karla Tengström
 
 ## Projektiin käytetty aika
 
-~X tuntia
+~2 päivää
+
+## Tulevaisuuden parannusehdotukset
+
+- **GitHub Action** -- automaattinen events.json-päivitys, joka tarkistaa lähdesivustot muutoksien tai uusien tapahtumien varalta ja päivittää datan ilman manuaalista työtä
+- **Kansainväliset kisat** -- laajentaminen kattamaan myös kansainväliset gravity-tapahtumat (esim. UCI DH World Cup, EWS)
