@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gravity Calendar — Suomen Gravity MTB Tapahtumat 2026</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">▼</span>
+        <span class="logo-text">Gravity<span class="logo-accent">Cal</span></span>
+      </div>
+      <p class="tagline">Suomen Gravity MTB Tapahtumat 2026</p>
+    </div>
+  </header>
+
+  <!-- ===== FILTERS ===== -->
+  <section class="filters-section" id="filters-section">
+    <!-- Mobile-only toggle — collapses/expands the filter bar -->
+    <button class="filter-toggle" id="filter-toggle">
+      <span>Suodattimet</span>
+      <span class="filter-toggle-icon" id="filter-toggle-icon">▾</span>
+    </button>
+    <div class="filters-inner">
+
+      <!-- Series filter -->
+      <div class="filter-group">
+        <label for="filter-series">Sarja</label>
+        <select id="filter-series">
+          <option value="all">Kaikki sarjat</option>
+          <option value="Suomi DH Cup">Suomi DH Cup</option>
+          <option value="Finnish Enduro Cup">Finnish Enduro Cup</option>
+          <option value="MTB Rally">MTB Rally</option>
+        </select>
+      </div>
+
+      <!-- Discipline filter -->
+      <div class="filter-group">
+        <label for="filter-discipline">Laji</label>
+        <select id="filter-discipline">
+          <option value="all">Kaikki lajit</option>
+          <option value="Downhill">Downhill</option>
+          <option value="Enduro">Enduro</option>
+          <option value="Other">Muu</option>
+        </select>
+      </div>
+
+      <!-- Month filter -->
+      <div class="filter-group">
+        <label for="filter-month">Kuukausi</label>
+        <select id="filter-month">
+          <option value="all">Kaikki kuukaudet</option>
+          <option value="4">Huhtikuu</option>
+          <option value="5">Toukokuu</option>
+          <option value="6">Kesäkuu</option>
+          <option value="7">Heinäkuu</option>
+          <option value="8">Elokuu</option>
+          <option value="9">Syyskuu</option>
+          <option value="10">Lokakuu</option>
+        </select>
+      </div>
+
+      <!-- Status filter -->
+      <div class="filter-group">
+        <label for="filter-status">Tila</label>
+        <select id="filter-status">
+          <option value="all">Kaikki</option>
+          <option value="upcoming">Tulevat</option>
+          <option value="past">Menneet</option>
+          <option value="cancelled">Perutut</option>
+        </select>
+      </div>
+
+      <!-- Sort -->
+      <div class="filter-group">
+        <label for="filter-sort">Järjestys</label>
+        <select id="filter-sort">
+          <option value="date-asc">Päivämäärä ↑</option>
+          <option value="date-desc">Päivämäärä ↓</option>
+          <option value="series">Sarja</option>
+        </select>
+      </div>
+
+      <!-- Search -->
+      <div class="filter-group filter-search">
+        <label for="filter-search">Haku</label>
+        <input type="text" id="filter-search" placeholder="Paikka, nimi...">
+      </div>
+
+      <!-- Reset filters -->
+      <button class="btn-reset-filters hidden" id="btn-reset-filters">Tyhjennä</button>
+
+    </div>
+  </section>
+
+  <!-- ===== EVENTS COUNT & VIEW TOGGLE ===== -->
+  <section class="results-info">
+    <p id="results-count"></p>
+    <div class="view-toggle">
+      <button class="view-btn active" id="view-cards" title="Korttinäkymä">▦</button>
+      <button class="view-btn" id="view-list" title="Listanäkymä">☰</button>
+    </div>
+  </section>
+
+  <!-- ===== EVENT CARDS ===== -->
+  <main class="events-grid" id="events-grid">
+    <!-- Cards injected by JS -->
+  </main>
+
+  <!-- ===== LOADING ===== -->
+  <div class="loading" id="loading">
+    <div class="loading-spinner"></div>
+    <p>Ladataan tapahtumia...</p>
+  </div>
+
+  <!-- ===== EMPTY STATE ===== -->
+  <div class="empty-state hidden" id="empty-state">
+    <p class="empty-icon">🏔️</p>
+    <p>Ei tapahtumia valituilla suodattimilla.</p>
+    <p><a href="#" id="empty-reset-link">Tyhjennä suodattimet</a></p>
+  </div>
+
+  <!-- ===== WEATHER MODAL ===== -->
+  <div class="modal-overlay hidden" id="weather-modal">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <div id="weather-body">
+        <div class="loading-spinner"></div>
+        <p>Haetaan säätietoja...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <p>Gravity Calendar 2026 — Säädata: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></p>
+    <p class="footer-small">Tapahtumatiedot päivitetty 4.5.2026. Tarkista ajantasaiset tiedot järjestäjien sivuilta.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
