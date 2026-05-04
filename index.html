@@ -34,50 +34,58 @@
 
       <!-- Series filter -->
       <div class="filter-group">
-        <label for="filter-series">Sarja</label>
-        <select id="filter-series">
-          <option value="all">Kaikki sarjat</option>
-          <option value="Suomi DH Cup">Suomi DH Cup</option>
-          <option value="Finnish Enduro Cup">Finnish Enduro Cup</option>
-          <option value="MTB Rally">MTB Rally</option>
-        </select>
+        <label>Sarja</label>
+        <div class="multi-select" id="filter-series">
+          <button class="multi-select-trigger" type="button">Kaikki sarjat</button>
+          <div class="multi-select-menu">
+            <div class="multi-select-option" data-value="Suomi DH Cup" data-short="DH Cup">Suomi DH Cup</div>
+            <div class="multi-select-option" data-value="Finnish Enduro Cup" data-short="FEC">Finnish Enduro Cup</div>
+            <div class="multi-select-option" data-value="MTB Rally" data-short="MTB Rally">MTB Rally</div>
+          </div>
+        </div>
       </div>
 
       <!-- Discipline filter -->
       <div class="filter-group">
-        <label for="filter-discipline">Laji</label>
-        <select id="filter-discipline">
-          <option value="all">Kaikki lajit</option>
-          <option value="Downhill">Downhill</option>
-          <option value="Enduro">Enduro</option>
-          <option value="Other">Muu</option>
-        </select>
+        <label>Laji</label>
+        <div class="multi-select" id="filter-discipline">
+          <button class="multi-select-trigger" type="button">Kaikki lajit</button>
+          <div class="multi-select-menu">
+            <div class="multi-select-option" data-value="Downhill" data-short="Downhill">Downhill</div>
+            <div class="multi-select-option" data-value="Enduro" data-short="Enduro">Enduro</div>
+            <div class="multi-select-option" data-value="Other" data-short="Muu">Muu</div>
+          </div>
+        </div>
       </div>
 
       <!-- Month filter -->
       <div class="filter-group">
-        <label for="filter-month">Kuukausi</label>
-        <select id="filter-month">
-          <option value="all">Kaikki kuukaudet</option>
-          <option value="4">Huhtikuu</option>
-          <option value="5">Toukokuu</option>
-          <option value="6">Kesäkuu</option>
-          <option value="7">Heinäkuu</option>
-          <option value="8">Elokuu</option>
-          <option value="9">Syyskuu</option>
-          <option value="10">Lokakuu</option>
-        </select>
+        <label>Kuukausi</label>
+        <div class="multi-select" id="filter-month">
+          <button class="multi-select-trigger" type="button">Kaikki kuukaudet</button>
+          <div class="multi-select-menu">
+            <div class="multi-select-option" data-value="4" data-short="Huhti">Huhtikuu</div>
+            <div class="multi-select-option" data-value="5" data-short="Touko">Toukokuu</div>
+            <div class="multi-select-option" data-value="6" data-short="Kesä">Kesäkuu</div>
+            <div class="multi-select-option" data-value="7" data-short="Heinä">Heinäkuu</div>
+            <div class="multi-select-option" data-value="8" data-short="Elo">Elokuu</div>
+            <div class="multi-select-option" data-value="9" data-short="Syys">Syyskuu</div>
+            <div class="multi-select-option" data-value="10" data-short="Loka">Lokakuu</div>
+          </div>
+        </div>
       </div>
 
       <!-- Status filter -->
       <div class="filter-group">
-        <label for="filter-status">Tila</label>
-        <select id="filter-status">
-          <option value="all">Kaikki</option>
-          <option value="upcoming">Tulevat</option>
-          <option value="past">Menneet</option>
-          <option value="cancelled">Perutut</option>
-        </select>
+        <label>Tila</label>
+        <div class="multi-select" id="filter-status">
+          <button class="multi-select-trigger" type="button">Kaikki</button>
+          <div class="multi-select-menu">
+            <div class="multi-select-option" data-value="upcoming" data-short="Tulevat">Tulevat</div>
+            <div class="multi-select-option" data-value="past" data-short="Menneet">Menneet</div>
+            <div class="multi-select-option" data-value="cancelled" data-short="Perutut">Perutut</div>
+          </div>
+        </div>
       </div>
 
       <!-- Sort -->

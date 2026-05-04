@@ -157,6 +157,91 @@ a:hover {
   flex: 1.5;
 }
 
+/* --- Multi-Select Dropdown --- */
+.multi-select {
+  position: relative;
+}
+.multi-select-trigger {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 0.6rem 2rem 0.6rem 0.75rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: border-color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a9a8e' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+}
+.multi-select.open .multi-select-trigger,
+.multi-select-trigger:focus {
+  border-color: var(--accent-lime);
+}
+.multi-select-trigger.has-selection {
+  border-color: rgba(126, 200, 80, 0.5);
+  color: var(--accent-lime);
+}
+.multi-select-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  z-index: 10;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.multi-select.open .multi-select-menu {
+  display: block;
+}
+.multi-select-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  color: var(--text-secondary);
+  user-select: none;
+}
+.multi-select-option:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+.multi-select-option::before {
+  content: '';
+  width: 14px;
+  min-width: 14px;
+  height: 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: transparent;
+  transition: all 0.15s;
+}
+.multi-select-option.checked::before {
+  background-color: var(--accent-lime);
+  border-color: var(--accent-lime);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%230d0f0e' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px;
+}
+.multi-select-option.checked {
+  color: var(--text-primary);
+}
+
 /* --- Results Info --- */
 .results-info {
   max-width: 1100px;
