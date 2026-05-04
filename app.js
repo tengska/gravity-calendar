@@ -701,7 +701,8 @@ Object.keys(multiSelectDefaults).forEach(function(id) {
   });
 
   container.querySelectorAll('.multi-select-option').forEach(function(option) {
-    option.addEventListener('click', function() {
+    option.addEventListener('click', function(e) {
+      e.stopPropagation(); // keep dropdown open after selecting
       option.classList.toggle('checked');
       updateTriggerText(id);
       applyFilters();
