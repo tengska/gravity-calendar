@@ -6,7 +6,7 @@ Selainpohjainen sovellus, joka kokoaa Suomen gravity-maastopyöräilytapahtumat 
 
 GitHub: [tengska/gravity-calendar](https://github.com/tengska/gravity-calendar)
 
-Netlify: linkki lisätään julkaisun jälkeen.
+Netlify: [gravitycalendar.netlify.app](https://gravitycalendar.netlify.app/)
 
 ## Ominaisuudet
 
@@ -72,7 +72,7 @@ Sovellus täyttää tehtävän vaatimukset:
 - Kaikki event handlerit lisätty dynaamisesti (addEventListener)
 - Natiivi JS -- ei ulkoisia JS-kirjastoja
 - Koodi on kommentoitu
-- Julkaistu [GitHubissa](https://github.com/tengska/gravity-calendar) ja Netlifyssä
+- Julkaistu [GitHubissa](https://github.com/tengska/gravity-calendar) ja [Netlifyssä](https://gravitycalendar.netlify.app/)
 
 ## Tekijä
 
