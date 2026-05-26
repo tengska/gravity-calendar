@@ -340,5 +340,43 @@
     "resultsUrl": "https://www.mtbrally.com/fi/results",
     "lat": 60.2352,
     "lon": 22.9398
+  },
+  {
+    "id": "muut-2026-mimmi-01",
+    "series": "Tapahtumat/Muut",
+    "seriesShort": "Mimmipäivä",
+    "name": "Mimmipäivä #1",
+    "location": "Meri-Teijo Bikepark",
+    "city": "Salo",
+    "organizer": "Meri-Teijo Bike Park",
+    "dateStart": "2026-06-13",
+    "dateEnd": "2026-06-13",
+    "discipline": "Other",
+    "status": "upcoming",
+    "competition": false,
+    "registrationUrl": "https://meriteijobikepark.com/events",
+    "websiteUrl": "https://meriteijobikepark.com/events",
+    "resultsUrl": "",
+    "lat": 60.2352,
+    "lon": 22.9398
+  },
+  {
+    "id": "muut-2026-mimmi-02",
+    "series": "Tapahtumat/Muut",
+    "seriesShort": "Mimmipäivä",
+    "name": "Mimmipäivä #2",
+    "location": "Meri-Teijo Bikepark",
+    "city": "Salo",
+    "organizer": "Meri-Teijo Bike Park",
+    "dateStart": "2026-09-05",
+    "dateEnd": "2026-09-05",
+    "discipline": "Other",
+    "status": "upcoming",
+    "competition": false,
+    "registrationUrl": "https://meriteijobikepark.com/events",
+    "websiteUrl": "https://meriteijobikepark.com/events",
+    "resultsUrl": "",
+    "lat": 60.2352,
+    "lon": 22.9398
   }
 ]
