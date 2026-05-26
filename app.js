@@ -956,39 +956,36 @@ viewMapBtn.addEventListener('click', function() {
 // 13. SUGGEST EVENT & FEEDBACK FORMS
 // ============================================
 
-btnSuggestEvent.addEventListener('click', function() {
-  var form = document.getElementById('suggest-form');
-  var success = document.getElementById('suggest-success');
-  form.reset();
-  form.classList.remove('hidden');
-  success.classList.add('hidden');
-  suggestModal.querySelector('.form-title').classList.remove('hidden');
-  suggestModal.querySelector('.form-desc').classList.remove('hidden');
-  suggestModal.classList.remove('hidden');
-});
-btnFeedback.addEventListener('click', function() {
-  var form = document.getElementById('feedback-form');
-  var success = document.getElementById('feedback-success');
-  form.reset();
-  form.classList.remove('hidden');
-  success.classList.add('hidden');
-  feedbackModal.querySelector('.form-title').classList.remove('hidden');
-  feedbackModal.querySelector('.form-desc').classList.remove('hidden');
-  feedbackModal.classList.remove('hidden');
-});
+function openModal(modal) {
+  var form = modal.querySelector('form');
+  var success = modal.querySelector('.form-success');
+  if (form) { form.reset(); form.classList.remove('hidden'); }
+  if (success) success.classList.add('hidden');
+  modal.querySelector('.form-title').classList.remove('hidden');
+  modal.querySelector('.form-desc').classList.remove('hidden');
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(modal) {
+  modal.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+btnSuggestEvent.addEventListener('click', function() { openModal(suggestModal); });
+btnFeedback.addEventListener('click', function() { openModal(feedbackModal); });
 
 document.getElementById('suggest-modal-close').addEventListener('click', function() {
-  suggestModal.classList.add('hidden');
+  closeModal(suggestModal);
 });
 document.getElementById('feedback-modal-close').addEventListener('click', function() {
-  feedbackModal.classList.add('hidden');
+  closeModal(feedbackModal);
 });
 
 suggestModal.addEventListener('click', function(e) {
-  if (e.target === suggestModal) suggestModal.classList.add('hidden');
+  if (e.target === suggestModal) closeModal(suggestModal);
 });
 feedbackModal.addEventListener('click', function(e) {
-  if (e.target === feedbackModal) feedbackModal.classList.add('hidden');
+  if (e.target === feedbackModal) closeModal(feedbackModal);
 });
 
 document.getElementById('suggest-form').addEventListener('submit', function(e) {
@@ -1037,8 +1034,8 @@ document.getElementById('suggest-date-start').addEventListener('change', functio
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    if (!suggestModal.classList.contains('hidden')) suggestModal.classList.add('hidden');
-    if (!feedbackModal.classList.contains('hidden')) feedbackModal.classList.add('hidden');
+    if (!suggestModal.classList.contains('hidden')) closeModal(suggestModal);
+    if (!feedbackModal.classList.contains('hidden')) closeModal(feedbackModal);
   }
 });
 
