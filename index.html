@@ -4,7 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gravity Calendar — Suomen Gravity MTB Tapahtumat 2026</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d0f0e'/%3E%3Cpath d='M16 6L6 24h20z' fill='%237ec850'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
+  <!-- Leaflet map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,10 +19,10 @@
   <!-- ===== HEADER ===== -->
   <header class="site-header">
     <div class="header-inner">
-      <div class="logo">
+      <a href="/" class="logo">
         <span class="logo-icon">▼</span>
         <span class="logo-text">Gravity<span class="logo-accent">Cal</span></span>
-      </div>
+      </a>
       <p class="tagline">Suomen Gravity MTB Tapahtumat 2026</p>
     </div>
   </header>
@@ -27,7 +31,7 @@
   <section class="filters-section" id="filters-section">
     <!-- Mobile-only toggle — collapses/expands the filter bar -->
     <button class="filter-toggle" id="filter-toggle">
-      <span>Suodattimet</span>
+      <span>Suodattimet <span class="filter-badge hidden" id="filter-badge"></span></span>
       <span class="filter-toggle-icon" id="filter-toggle-icon">▾</span>
     </button>
     <div class="filters-inner">
@@ -41,6 +45,7 @@
             <div class="multi-select-option" data-value="Suomi DH Cup" data-short="DH Cup">Suomi DH Cup</div>
             <div class="multi-select-option" data-value="Finnish Enduro Cup" data-short="FEC">Finnish Enduro Cup</div>
             <div class="multi-select-option" data-value="MTB Rally" data-short="MTB Rally">MTB Rally</div>
+            <div class="multi-select-option" data-value="Tapahtumat/Muut" data-short="Muut">Tapahtumat/Muut</div>
           </div>
         </div>
       </div>
@@ -116,8 +121,14 @@
     <div class="view-toggle">
       <button class="view-btn active" id="view-cards" title="Korttinäkymä">▦</button>
       <button class="view-btn" id="view-list" title="Listanäkymä">☰</button>
+      <button class="view-btn" id="view-map" title="Karttanäkymä">📍</button>
     </div>
   </section>
+
+  <!-- ===== MAP VIEW ===== -->
+  <div class="map-container hidden" id="map-container">
+    <div id="events-map"></div>
+  </div>
 
   <!-- ===== EVENT CARDS ===== -->
   <main class="events-grid" id="events-grid">
@@ -148,9 +159,127 @@
     </div>
   </div>
 
+  <!-- ===== SUGGEST EVENT MODAL ===== -->
+  <div class="modal-overlay hidden" id="suggest-modal">
+    <div class="modal-content modal-form">
+      <button class="modal-close" id="suggest-modal-close">&times;</button>
+      <h3 class="form-title">Ehdota tapahtumaa</h3>
+      <p class="form-desc">Täytä tiedot niin lisäämme tapahtuman kalenteriin tarkistuksen jälkeen.</p>
+      <form name="event-suggestion" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="suggest-form">
+        <input type="hidden" name="form-name" value="event-suggestion">
+        <p class="hidden"><label>Älä täytä: <input name="bot-field"></label></p>
+        <div class="form-row">
+          <label for="suggest-series">Sarja *</label>
+          <select id="suggest-series" name="series" required>
+            <option value="">Valitse...</option>
+            <option value="Suomi DH Cup">Suomi DH Cup</option>
+            <option value="Finnish Enduro Cup">Finnish Enduro Cup</option>
+            <option value="MTB Rally">MTB Rally</option>
+            <option value="Tapahtumat/Muut">Tapahtumat/Muut</option>
+            <option value="Muu">Muu (kerro lisätiedoissa)</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="suggest-discipline">Laji *</label>
+          <select id="suggest-discipline" name="discipline" required>
+            <option value="">Valitse...</option>
+            <option value="Downhill">Downhill</option>
+            <option value="Enduro">Enduro</option>
+            <option value="Other">Muu</option>
+          </select>
+        </div>
+        <div class="form-row form-row-half">
+          <div>
+            <label for="suggest-date-start">Alkupäivä *</label>
+            <input type="date" id="suggest-date-start" name="date-start" required>
+          </div>
+          <div>
+            <label for="suggest-date-end">Loppupäivä *</label>
+            <input type="date" id="suggest-date-end" name="date-end" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="suggest-name">Tapahtuman nimi *</label>
+          <input type="text" id="suggest-name" name="name" required placeholder="esim. Gravity Cup #3">
+        </div>
+        <div class="form-row form-row-half">
+          <div>
+            <label for="suggest-location">Sijainti *</label>
+            <input type="text" id="suggest-location" name="location" required placeholder="esim. Tornari Bikepark">
+          </div>
+          <div>
+            <label for="suggest-city">Kaupunki *</label>
+            <input type="text" id="suggest-city" name="city" required placeholder="esim. Klaukkala">
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="suggest-organizer">Järjestäjä *</label>
+          <input type="text" id="suggest-organizer" name="organizer" required placeholder="esim. Club Tornari">
+        </div>
+        <div class="form-row">
+          <label for="suggest-registration">Ilmoittautuminen</label>
+          <input type="text" id="suggest-registration" name="registration-url" placeholder="esim. www.tapahtumiin.fi/ilmoittaudu">
+        </div>
+        <div class="form-row">
+          <label for="suggest-url">Lisätiedot (URL)</label>
+          <input type="text" id="suggest-url" name="url" placeholder="esim. www.bikepark.fi/tapahtuma">
+        </div>
+        <div class="form-row">
+          <label for="suggest-notes">Muut huomiot</label>
+          <textarea id="suggest-notes" name="notes" rows="2" placeholder="Valinnainen"></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Lähetä ehdotus</button>
+      </form>
+      <div class="form-success hidden" id="suggest-success">
+        <p class="success-icon">✅</p>
+        <p>Kiitos ehdotuksesta! Tarkistamme sen ja lisäämme kalenteriin.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FEEDBACK MODAL ===== -->
+  <div class="modal-overlay hidden" id="feedback-modal">
+    <div class="modal-content modal-form">
+      <button class="modal-close" id="feedback-modal-close">&times;</button>
+      <h3 class="form-title">Palaute</h3>
+      <p class="form-desc">Bugi, idea tai muu palaute — kaikki on tervetullutta.</p>
+      <form name="feedback" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="feedback-form">
+        <input type="hidden" name="form-name" value="feedback">
+        <p class="hidden"><label>Älä täytä: <input name="bot-field"></label></p>
+        <div class="form-row">
+          <label for="feedback-type">Tyyppi *</label>
+          <select id="feedback-type" name="type" required>
+            <option value="">Valitse...</option>
+            <option value="bug">Bugi / virhe</option>
+            <option value="idea">Idea / toive</option>
+            <option value="muu">Muu</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="feedback-message">Viesti *</label>
+          <textarea id="feedback-message" name="message" rows="4" required placeholder="Kerro tarkemmin..."></textarea>
+        </div>
+        <div class="form-row">
+          <label for="feedback-contact">Yhteystieto (valinnainen)</label>
+          <input type="text" id="feedback-contact" name="contact" placeholder="esim. sähköposti tai puhelinnumero">
+        </div>
+        <button type="submit" class="btn-submit">Lähetä palaute</button>
+      </form>
+      <div class="form-success hidden" id="feedback-success">
+        <p class="success-icon">✅</p>
+        <p>Kiitos palautteesta!</p>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== FOOTER ===== -->
   <footer class="site-footer">
-    <p>Gravity Calendar 2026 — Säädata: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></p>
+    <div class="footer-actions">
+      <button class="footer-btn" id="btn-suggest-event">＋ Ehdota tapahtumaa</button>
+      <button class="footer-btn footer-btn-secondary" id="btn-feedback">💬 Palaute</button>
+    </div>
+    <p>Gravity Calendar 2026 — Tekijä: Karla · <a href="https://www.linkedin.com/in/tengska/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://www.instagram.com/tengska/" target="_blank" rel="noopener">Instagram</a></p>
+    <p class="footer-small">Säädata: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · Kartta: <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap</a></p>
     <p class="footer-small">Tapahtumatiedot päivitetty 4.5.2026. Tarkista ajantasaiset tiedot järjestäjien sivuilta.</p>
   </footer>
 

@@ -13,8 +13,10 @@
 let allEvents = [];        // All events loaded from JSON
 let filteredEvents = [];   // Events after applying filters
 let weatherCache = {};     // Cache weather responses to avoid duplicate API calls
-let currentView = 'cards'; // Current view mode: 'cards' or 'list'
+let currentView = 'cards'; // Current view mode: 'cards', 'list', or 'map'
 let weatherQueue = [];     // Queue for staggered weather mini loading
+let leafletMap = null;     // Leaflet map instance
+let mapMarkers = [];       // Map marker layer group
 
 // ---- DOM References ----
 const eventsGrid = document.getElementById('events-grid');
@@ -35,6 +37,12 @@ const emptyResetLink = document.getElementById('empty-reset-link');
 const filtersSection = document.getElementById('filters-section');
 const filterToggleBtn = document.getElementById('filter-toggle');
 const filterToggleIcon = document.getElementById('filter-toggle-icon');
+const mapContainer = document.getElementById('map-container');
+const viewMapBtn = document.getElementById('view-map');
+const btnSuggestEvent = document.getElementById('btn-suggest-event');
+const btnFeedback = document.getElementById('btn-feedback');
+const suggestModal = document.getElementById('suggest-modal');
+const feedbackModal = document.getElementById('feedback-modal');
 
 // Multi-select default labels
 var multiSelectDefaults = {
@@ -276,6 +284,14 @@ function applyFilters() {
     btnResetFilters.classList.add('hidden');
   }
 
+  var filterBadge = document.getElementById('filter-badge');
+  if (activeCount > 0) {
+    filterBadge.textContent = '(' + activeCount + ')';
+    filterBadge.classList.remove('hidden');
+  } else {
+    filterBadge.classList.add('hidden');
+  }
+
   renderEvents(filteredEvents);
 }
 
@@ -311,6 +327,18 @@ function renderEvents(events) {
   eventsGrid.innerHTML = '';
   weatherQueue = [];
 
+  if (currentView === 'map') {
+    eventsGrid.classList.add('hidden');
+    mapContainer.classList.remove('hidden');
+    emptyStateEl.classList.add('hidden');
+    resultsCountEl.textContent = events.length + ' tapahtumaa';
+    renderMap(events);
+    return;
+  }
+
+  mapContainer.classList.add('hidden');
+  eventsGrid.classList.remove('hidden');
+
   if (currentView === 'list') {
     eventsGrid.classList.add('list-view');
   } else {
@@ -327,7 +355,6 @@ function renderEvents(events) {
 
   var lastMonth = null;
   events.forEach(function(event, index) {
-    // Insert a month divider whenever the month changes (both views)
     var eventMonth = new Date(event.dateStart).getMonth();
     var eventYear = new Date(event.dateStart).getFullYear();
     var monthKey = eventYear + '-' + eventMonth;
@@ -360,6 +387,7 @@ function createEventCard(event) {
   var seriesClass = 'series-rally';
   if (event.series === 'Suomi DH Cup') seriesClass = 'series-dh';
   if (event.series === 'Finnish Enduro Cup') seriesClass = 'series-enduro';
+  if (event.series === 'Tapahtumat/Muut') seriesClass = 'series-events';
 
   var dateDisplay = formatDateRange(event.dateStart, event.dateEnd);
   var countdown = getCountdown(event.dateStart, event.status);
@@ -388,7 +416,7 @@ function createEventCard(event) {
   if (event.registrationUrl && event.status === 'upcoming') {
     html += '<a href="' + event.registrationUrl + '" target="_blank" rel="noopener" class="btn-register">Ilmoittaudu</a>';
   }
-  if (event.resultsUrl && event.status === 'past') {
+  if (event.resultsUrl && event.status === 'past' && event.competition !== false) {
     html += '<a href="' + event.resultsUrl + '" target="_blank" rel="noopener" class="btn-results">Tulokset</a>';
   }
   if (event.websiteUrl) {
@@ -544,6 +572,7 @@ function createEventRow(event) {
   var seriesClass = 'series-rally';
   if (event.series === 'Suomi DH Cup') seriesClass = 'series-dh';
   if (event.series === 'Finnish Enduro Cup') seriesClass = 'series-enduro';
+  if (event.series === 'Tapahtumat/Muut') seriesClass = 'series-events';
 
   var dateDisplay = formatDateRange(event.dateStart, event.dateEnd);
   var html = '';
@@ -563,10 +592,12 @@ function createEventRow(event) {
 
   if (event.status === 'past' || event.status === 'cancelled') {
     html += '<div class="row-actions row-actions-wide">';
-    if (event.status === 'past' && event.resultsUrl) {
+    if (event.status === 'past' && event.resultsUrl && event.competition !== false) {
       html += '<a href="' + event.resultsUrl + '" target="_blank" rel="noopener" class="row-btn-register row-btn-results">Tulokset</a>';
     } else if (event.status === 'cancelled') {
       html += '<span class="row-cancelled-label">Peruttu</span>';
+    } else if (event.websiteUrl) {
+      html += '<a href="' + event.websiteUrl + '" target="_blank" rel="noopener" class="row-btn-register">Lisätiedot</a>';
     } else {
       html += '<span class="row-action-empty"></span>';
     }
@@ -734,12 +765,27 @@ emptyResetLink.addEventListener('click', function(e) {
   resetFilters();
 });
 
+// Logo = home (reset filters, default view, scroll to top)
+document.querySelector('.logo').addEventListener('click', function(e) {
+  e.preventDefault();
+  resetFilters();
+  if (currentView !== 'cards') {
+    currentView = 'cards';
+    viewCardsBtn.classList.add('active');
+    viewListBtn.classList.remove('active');
+    viewMapBtn.classList.remove('active');
+    renderEvents(filteredEvents);
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
 // View toggle
 viewCardsBtn.addEventListener('click', function() {
   if (currentView === 'cards') return;
   currentView = 'cards';
   viewCardsBtn.classList.add('active');
   viewListBtn.classList.remove('active');
+  viewMapBtn.classList.remove('active');
   renderEvents(filteredEvents);
 });
 
@@ -748,6 +794,7 @@ viewListBtn.addEventListener('click', function() {
   currentView = 'list';
   viewListBtn.classList.add('active');
   viewCardsBtn.classList.remove('active');
+  viewMapBtn.classList.remove('active');
   renderEvents(filteredEvents);
 });
 
@@ -770,6 +817,264 @@ document.addEventListener('keydown', function(e) {
 
 
 // ============================================
-// 10. INITIALIZE APP
+// 10. MAP VIEW
 // ============================================
+
+function getSeriesColor(series) {
+  if (series === 'Suomi DH Cup') return '#7ec850';
+  if (series === 'Finnish Enduro Cup') return '#c8693a';
+  if (series === 'Tapahtumat/Muut') return '#9b6fc0';
+  return '#4d8fa8';
+}
+
+function buildEventPopupBlock(event) {
+  var seriesClass = 'series-rally';
+  if (event.series === 'Suomi DH Cup') seriesClass = 'series-dh';
+  if (event.series === 'Finnish Enduro Cup') seriesClass = 'series-enduro';
+  if (event.series === 'Tapahtumat/Muut') seriesClass = 'series-events';
+
+  var html = '<div class="map-popup-event">'
+    + '<div class="map-popup-series card-series ' + seriesClass + '">' + event.seriesShort + '</div>'
+    + '<div class="map-popup-name">' + event.name + '</div>'
+    + '<div class="map-popup-date">' + formatDateRange(event.dateStart, event.dateEnd) + '</div>'
+    + '<div class="map-popup-actions">';
+  if (event.registrationUrl && event.status === 'upcoming') {
+    html += '<a class="map-popup-link map-popup-register" href="' + event.registrationUrl + '" target="_blank" rel="noopener">Ilmoittaudu</a>';
+  }
+  if (event.websiteUrl) {
+    html += '<a class="map-popup-link" href="' + event.websiteUrl + '" target="_blank" rel="noopener">Lisätiedot →</a>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function renderMap(events) {
+  if (!leafletMap) {
+    leafletMap = L.map('events-map').setView([64.0, 26.0], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap',
+      maxZoom: 18
+    }).addTo(leafletMap);
+    mapMarkers = L.layerGroup().addTo(leafletMap);
+  }
+
+  setTimeout(function() { leafletMap.invalidateSize(); }, 100);
+  mapMarkers.clearLayers();
+
+  // Group events by location
+  var groups = {};
+  events.forEach(function(event) {
+    if (!event.lat || !event.lon) return;
+    var key = event.lat + ',' + event.lon;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(event);
+  });
+
+  var bounds = [];
+  Object.keys(groups).forEach(function(key) {
+    var group = groups[key];
+    var first = group[0];
+
+    // Sort: upcoming first (by date), then collect unique series colors
+    var sorted = group.slice().sort(function(a, b) {
+      var aUp = a.status === 'upcoming' ? 0 : 1;
+      var bUp = b.status === 'upcoming' ? 0 : 1;
+      if (aUp !== bUp) return aUp - bUp;
+      return new Date(a.dateStart) - new Date(b.dateStart);
+    });
+    var seen = {};
+    var uniqueColors = [];
+    sorted.forEach(function(e) {
+      if (!seen[e.series]) {
+        seen[e.series] = true;
+        uniqueColors.push(getSeriesColor(e.series));
+      }
+    });
+
+    var marker;
+    if (uniqueColors.length === 1) {
+      marker = L.circleMarker([first.lat, first.lon], {
+        radius: group.length > 1 ? 11 : 9,
+        fillColor: uniqueColors[0],
+        color: '#0d0f0e',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: first.status === 'past' ? 0.35 : 0.85
+      });
+    } else {
+      // Reverse so first upcoming color renders last in DOM but gets highest z-index (on top)
+      var reversed = uniqueColors.slice().reverse();
+      var total = reversed.length;
+      var dotsHtml = reversed.map(function(c, i) {
+        var z = i + 1;
+        return '<span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:' + c + ';border:2px solid #0d0f0e;margin:0 -5px;position:relative;z-index:' + z + '"></span>';
+      }).join('');
+      var dotWidth = 16 + (total - 1) * 6;
+      var icon = L.divIcon({
+        html: '<div style="display:flex;align-items:center">' + dotsHtml + '</div>',
+        className: 'map-multi-marker',
+        iconSize: [dotWidth, 18],
+        iconAnchor: [dotWidth / 2, 9]
+      });
+      marker = L.marker([first.lat, first.lon], { icon: icon });
+    }
+
+    var location = first.location + (first.city ? ' · ' + first.city : '');
+    var popupHtml = '<div style="font-family:Outfit,sans-serif;min-width:200px;max-width:280px">'
+      + '<div class="map-popup-location" style="margin-bottom:0.5rem;font-weight:600">' + location + '</div>';
+    group.forEach(function(event, i) {
+      if (i > 0) popupHtml += '<hr style="border:none;border-top:1px solid #ddd;margin:0.4rem 0">';
+      popupHtml += buildEventPopupBlock(event);
+    });
+    popupHtml += '</div>';
+    marker.bindPopup(popupHtml, { maxHeight: 300 });
+
+    mapMarkers.addLayer(marker);
+    bounds.push([first.lat, first.lon]);
+  });
+
+  if (bounds.length > 0) {
+    leafletMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 8 });
+  }
+}
+
+
+// ============================================
+// 11. MOBILE AUTO-COLLAPSE FILTERS ON SCROLL
+// ============================================
+
+(function() {
+  var ticking = false;
+
+  window.addEventListener('scroll', function() {
+    if (window.innerWidth > 600) return;
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        if (window.scrollY > 120 && filtersSection.classList.contains('expanded')) {
+          filtersSection.classList.remove('expanded');
+          filterToggleIcon.textContent = '▾';
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+})();
+
+
+// ============================================
+// 12. MAP VIEW TOGGLE
+// ============================================
+
+viewMapBtn.addEventListener('click', function() {
+  if (currentView === 'map') return;
+  currentView = 'map';
+  viewMapBtn.classList.add('active');
+  viewCardsBtn.classList.remove('active');
+  viewListBtn.classList.remove('active');
+  renderEvents(filteredEvents);
+});
+
+
+// ============================================
+// 13. SUGGEST EVENT & FEEDBACK FORMS
+// ============================================
+
+function openModal(modal) {
+  var form = modal.querySelector('form');
+  var success = modal.querySelector('.form-success');
+  if (form) { form.reset(); form.classList.remove('hidden'); }
+  if (success) success.classList.add('hidden');
+  modal.querySelector('.form-title').classList.remove('hidden');
+  modal.querySelector('.form-desc').classList.remove('hidden');
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(modal) {
+  modal.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+btnSuggestEvent.addEventListener('click', function() { openModal(suggestModal); });
+btnFeedback.addEventListener('click', function() { openModal(feedbackModal); });
+
+document.getElementById('suggest-modal-close').addEventListener('click', function() {
+  closeModal(suggestModal);
+});
+document.getElementById('feedback-modal-close').addEventListener('click', function() {
+  closeModal(feedbackModal);
+});
+
+suggestModal.addEventListener('click', function(e) {
+  if (e.target === suggestModal) closeModal(suggestModal);
+});
+feedbackModal.addEventListener('click', function(e) {
+  if (e.target === feedbackModal) closeModal(feedbackModal);
+});
+
+document.getElementById('suggest-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var form = e.target;
+  var formData = new FormData(form);
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(formData).toString()
+  }).then(function() {
+    form.classList.add('hidden');
+    suggestModal.querySelector('.form-title').classList.add('hidden');
+    suggestModal.querySelector('.form-desc').classList.add('hidden');
+    document.getElementById('suggest-success').classList.remove('hidden');
+  }).catch(function() {
+    alert('Lähetys epäonnistui. Yritä uudelleen.');
+  });
+});
+
+document.getElementById('feedback-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var form = e.target;
+  var formData = new FormData(form);
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(formData).toString()
+  }).then(function() {
+    form.classList.add('hidden');
+    feedbackModal.querySelector('.form-title').classList.add('hidden');
+    feedbackModal.querySelector('.form-desc').classList.add('hidden');
+    document.getElementById('feedback-success').classList.remove('hidden');
+  }).catch(function() {
+    alert('Lähetys epäonnistui. Yritä uudelleen.');
+  });
+});
+
+document.getElementById('suggest-date-start').addEventListener('change', function() {
+  var endInput = document.getElementById('suggest-date-end');
+  var val = this.value;
+  if (val && val.length === 10 && parseInt(val.split('-')[0], 10) >= 2000 && !endInput.value) {
+    endInput.value = val;
+  }
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (!suggestModal.classList.contains('hidden')) closeModal(suggestModal);
+    if (!feedbackModal.classList.contains('hidden')) closeModal(feedbackModal);
+  }
+});
+
+
+// ============================================
+// 14. INITIALIZE APP
+// ============================================
+
+// Pre-select "Tulevat" (upcoming) status filter so users see future events first
+(function() {
+  var upcomingOption = document.querySelector('#filter-status .multi-select-option[data-value="upcoming"]');
+  if (upcomingOption) {
+    upcomingOption.classList.add('checked');
+    updateTriggerText('filter-status');
+  }
+})();
+
 loadEvents();
