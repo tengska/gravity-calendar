@@ -62,7 +62,10 @@ a:hover {
   max-width: 900px;
   margin: 0 auto;
 }
-.logo {
+a.logo,
+a.logo:visited,
+a.logo:hover,
+a.logo:active {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
