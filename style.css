@@ -1066,6 +1066,10 @@ a:hover {
   background-position: right 0.75rem center;
   padding-right: 2rem;
 }
+.form-row input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
 .form-row-half {
   display: grid;
   grid-template-columns: 1fr 1fr;

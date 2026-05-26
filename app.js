@@ -1029,8 +1029,9 @@ document.getElementById('feedback-form').addEventListener('submit', function(e) 
 
 document.getElementById('suggest-date-start').addEventListener('change', function() {
   var endInput = document.getElementById('suggest-date-end');
-  if (!endInput.value) {
-    endInput.value = this.value;
+  var val = this.value;
+  if (val && val.length === 10 && parseInt(val.split('-')[0], 10) >= 2000 && !endInput.value) {
+    endInput.value = val;
   }
 });
 
