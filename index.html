@@ -169,7 +169,7 @@
         <input type="hidden" name="form-name" value="event-suggestion">
         <p class="hidden"><label>Älä täytä: <input name="bot-field"></label></p>
         <div class="form-row">
-          <label for="suggest-series">Sarja</label>
+          <label for="suggest-series">Sarja *</label>
           <select id="suggest-series" name="series" required>
             <option value="">Valitse...</option>
             <option value="Suomi DH Cup">Suomi DH Cup</option>
@@ -180,7 +180,7 @@
           </select>
         </div>
         <div class="form-row">
-          <label for="suggest-discipline">Laji</label>
+          <label for="suggest-discipline">Laji *</label>
           <select id="suggest-discipline" name="discipline" required>
             <option value="">Valitse...</option>
             <option value="Downhill">Downhill</option>
@@ -190,35 +190,35 @@
         </div>
         <div class="form-row form-row-half">
           <div>
-            <label for="suggest-date-start">Alkupäivä</label>
+            <label for="suggest-date-start">Alkupäivä *</label>
             <input type="date" id="suggest-date-start" name="date-start" required>
           </div>
           <div>
-            <label for="suggest-date-end">Loppupäivä</label>
+            <label for="suggest-date-end">Loppupäivä *</label>
             <input type="date" id="suggest-date-end" name="date-end" required>
           </div>
         </div>
         <div class="form-row">
-          <label for="suggest-name">Tapahtuman nimi</label>
+          <label for="suggest-name">Tapahtuman nimi *</label>
           <input type="text" id="suggest-name" name="name" required placeholder="esim. Gravity Cup #3">
         </div>
         <div class="form-row form-row-half">
           <div>
-            <label for="suggest-location">Sijainti</label>
+            <label for="suggest-location">Sijainti *</label>
             <input type="text" id="suggest-location" name="location" required placeholder="esim. Tornari Bikepark">
           </div>
           <div>
-            <label for="suggest-city">Kaupunki</label>
+            <label for="suggest-city">Kaupunki *</label>
             <input type="text" id="suggest-city" name="city" required placeholder="esim. Klaukkala">
           </div>
         </div>
         <div class="form-row">
-          <label for="suggest-organizer">Järjestäjä</label>
+          <label for="suggest-organizer">Järjestäjä *</label>
           <input type="text" id="suggest-organizer" name="organizer" required placeholder="esim. Club Tornari">
         </div>
         <div class="form-row">
           <label for="suggest-url">Lisätiedot (URL)</label>
-          <input type="url" id="suggest-url" name="url" placeholder="https://...">
+          <input type="text" id="suggest-url" name="url" placeholder="www.example.com">
         </div>
         <div class="form-row">
           <label for="suggest-notes">Muut huomiot</label>
@@ -243,7 +243,7 @@
         <input type="hidden" name="form-name" value="feedback">
         <p class="hidden"><label>Älä täytä: <input name="bot-field"></label></p>
         <div class="form-row">
-          <label for="feedback-type">Tyyppi</label>
+          <label for="feedback-type">Tyyppi *</label>
           <select id="feedback-type" name="type" required>
             <option value="">Valitse...</option>
             <option value="bug">Bugi / virhe</option>
@@ -252,7 +252,7 @@
           </select>
         </div>
         <div class="form-row">
-          <label for="feedback-message">Viesti</label>
+          <label for="feedback-message">Viesti *</label>
           <textarea id="feedback-message" name="message" rows="4" required placeholder="Kerro tarkemmin..."></textarea>
         </div>
         <div class="form-row">

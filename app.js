@@ -957,9 +957,23 @@ viewMapBtn.addEventListener('click', function() {
 // ============================================
 
 btnSuggestEvent.addEventListener('click', function() {
+  var form = document.getElementById('suggest-form');
+  var success = document.getElementById('suggest-success');
+  form.reset();
+  form.classList.remove('hidden');
+  success.classList.add('hidden');
+  suggestModal.querySelector('.form-title').classList.remove('hidden');
+  suggestModal.querySelector('.form-desc').classList.remove('hidden');
   suggestModal.classList.remove('hidden');
 });
 btnFeedback.addEventListener('click', function() {
+  var form = document.getElementById('feedback-form');
+  var success = document.getElementById('feedback-success');
+  form.reset();
+  form.classList.remove('hidden');
+  success.classList.add('hidden');
+  feedbackModal.querySelector('.form-title').classList.remove('hidden');
+  feedbackModal.querySelector('.form-desc').classList.remove('hidden');
   feedbackModal.classList.remove('hidden');
 });
 
@@ -987,6 +1001,8 @@ document.getElementById('suggest-form').addEventListener('submit', function(e) {
     body: new URLSearchParams(formData).toString()
   }).then(function() {
     form.classList.add('hidden');
+    suggestModal.querySelector('.form-title').classList.add('hidden');
+    suggestModal.querySelector('.form-desc').classList.add('hidden');
     document.getElementById('suggest-success').classList.remove('hidden');
   }).catch(function() {
     alert('Lähetys epäonnistui. Yritä uudelleen.');
@@ -1003,10 +1019,19 @@ document.getElementById('feedback-form').addEventListener('submit', function(e) 
     body: new URLSearchParams(formData).toString()
   }).then(function() {
     form.classList.add('hidden');
+    feedbackModal.querySelector('.form-title').classList.add('hidden');
+    feedbackModal.querySelector('.form-desc').classList.add('hidden');
     document.getElementById('feedback-success').classList.remove('hidden');
   }).catch(function() {
     alert('Lähetys epäonnistui. Yritä uudelleen.');
   });
+});
+
+document.getElementById('suggest-date-start').addEventListener('change', function() {
+  var endInput = document.getElementById('suggest-date-end');
+  if (!endInput.value) {
+    endInput.value = this.value;
+  }
 });
 
 document.addEventListener('keydown', function(e) {
