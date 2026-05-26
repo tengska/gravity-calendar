@@ -803,6 +803,27 @@ function getSeriesColor(series) {
   return '#4d8fa8';
 }
 
+function buildEventPopupBlock(event) {
+  var seriesClass = 'series-rally';
+  if (event.series === 'Suomi DH Cup') seriesClass = 'series-dh';
+  if (event.series === 'Finnish Enduro Cup') seriesClass = 'series-enduro';
+  if (event.series === 'Tapahtumat/Muut') seriesClass = 'series-events';
+
+  var html = '<div class="map-popup-event">'
+    + '<div class="map-popup-series card-series ' + seriesClass + '">' + event.seriesShort + '</div>'
+    + '<div class="map-popup-name">' + event.name + '</div>'
+    + '<div class="map-popup-date">' + formatDateRange(event.dateStart, event.dateEnd) + '</div>'
+    + '<div class="map-popup-actions">';
+  if (event.registrationUrl && event.status === 'upcoming') {
+    html += '<a class="map-popup-link map-popup-register" href="' + event.registrationUrl + '" target="_blank" rel="noopener">Ilmoittaudu</a>';
+  }
+  if (event.websiteUrl) {
+    html += '<a class="map-popup-link" href="' + event.websiteUrl + '" target="_blank" rel="noopener">Lisätiedot →</a>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
 function renderMap(events) {
   if (!leafletMap) {
     leafletMap = L.map('events-map').setView([64.0, 26.0], 5);
@@ -816,42 +837,76 @@ function renderMap(events) {
   setTimeout(function() { leafletMap.invalidateSize(); }, 100);
   mapMarkers.clearLayers();
 
-  var bounds = [];
+  // Group events by location
+  var groups = {};
   events.forEach(function(event) {
     if (!event.lat || !event.lon) return;
+    var key = event.lat + ',' + event.lon;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(event);
+  });
 
-    var color = getSeriesColor(event.series);
-    var marker = L.circleMarker([event.lat, event.lon], {
-      radius: 9,
-      fillColor: color,
-      color: '#0d0f0e',
-      weight: 2,
-      opacity: 1,
-      fillOpacity: event.status === 'past' ? 0.35 : 0.85
+  var bounds = [];
+  Object.keys(groups).forEach(function(key) {
+    var group = groups[key];
+    var first = group[0];
+
+    // Sort: upcoming first (by date), then collect unique series colors
+    var sorted = group.slice().sort(function(a, b) {
+      var aUp = a.status === 'upcoming' ? 0 : 1;
+      var bUp = b.status === 'upcoming' ? 0 : 1;
+      if (aUp !== bUp) return aUp - bUp;
+      return new Date(a.dateStart) - new Date(b.dateStart);
+    });
+    var seen = {};
+    var uniqueColors = [];
+    sorted.forEach(function(e) {
+      if (!seen[e.series]) {
+        seen[e.series] = true;
+        uniqueColors.push(getSeriesColor(e.series));
+      }
     });
 
-    var seriesClass = 'series-rally';
-    if (event.series === 'Suomi DH Cup') seriesClass = 'series-dh';
-    if (event.series === 'Finnish Enduro Cup') seriesClass = 'series-enduro';
-    if (event.series === 'Tapahtumat/Muut') seriesClass = 'series-events';
+    var marker;
+    if (uniqueColors.length === 1) {
+      marker = L.circleMarker([first.lat, first.lon], {
+        radius: group.length > 1 ? 11 : 9,
+        fillColor: uniqueColors[0],
+        color: '#0d0f0e',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: first.status === 'past' ? 0.35 : 0.85
+      });
+    } else {
+      // Reverse so first upcoming color renders last in DOM but gets highest z-index (on top)
+      var reversed = uniqueColors.slice().reverse();
+      var total = reversed.length;
+      var dotsHtml = reversed.map(function(c, i) {
+        var z = i + 1;
+        return '<span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:' + c + ';border:2px solid #0d0f0e;margin:0 -5px;position:relative;z-index:' + z + '"></span>';
+      }).join('');
+      var dotWidth = 16 + (total - 1) * 6;
+      var icon = L.divIcon({
+        html: '<div style="display:flex;align-items:center">' + dotsHtml + '</div>',
+        className: 'map-multi-marker',
+        iconSize: [dotWidth, 18],
+        iconAnchor: [dotWidth / 2, 9]
+      });
+      marker = L.marker([first.lat, first.lon], { icon: icon });
+    }
 
-    var popupHtml = '<div style="font-family:Outfit,sans-serif;min-width:180px">'
-      + '<div class="map-popup-series card-series ' + seriesClass + '">' + event.seriesShort + '</div>'
-      + '<div class="map-popup-name">' + event.name + '</div>'
-      + '<div class="map-popup-location">' + event.location + (event.city ? ' · ' + event.city : '') + '</div>'
-      + '<div class="map-popup-date">' + formatDateRange(event.dateStart, event.dateEnd) + '</div>';
-    popupHtml += '<div class="map-popup-actions">';
-    if (event.registrationUrl && event.status === 'upcoming') {
-      popupHtml += '<a class="map-popup-link map-popup-register" href="' + event.registrationUrl + '" target="_blank" rel="noopener">Ilmoittaudu</a>';
-    }
-    if (event.websiteUrl) {
-      popupHtml += '<a class="map-popup-link" href="' + event.websiteUrl + '" target="_blank" rel="noopener">Lisätiedot →</a>';
-    }
-    popupHtml += '</div></div>';
-    marker.bindPopup(popupHtml);
+    var location = first.location + (first.city ? ' · ' + first.city : '');
+    var popupHtml = '<div style="font-family:Outfit,sans-serif;min-width:200px;max-width:280px">'
+      + '<div class="map-popup-location" style="margin-bottom:0.5rem;font-weight:600">' + location + '</div>';
+    group.forEach(function(event, i) {
+      if (i > 0) popupHtml += '<hr style="border:none;border-top:1px solid #ddd;margin:0.4rem 0">';
+      popupHtml += buildEventPopupBlock(event);
+    });
+    popupHtml += '</div>';
+    marker.bindPopup(popupHtml, { maxHeight: 300 });
 
     mapMarkers.addLayer(marker);
-    bounds.push([event.lat, event.lon]);
+    bounds.push([first.lat, first.lon]);
   });
 
   if (bounds.length > 0) {

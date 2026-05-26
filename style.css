@@ -966,6 +966,10 @@ a:hover {
   border: 1px solid var(--border-subtle);
   z-index: 1;
 }
+.map-multi-marker {
+  background: none !important;
+  border: none !important;
+}
 .map-popup-series {
   font-family: var(--font-mono);
   font-size: 0.6rem;
