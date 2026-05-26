@@ -921,6 +921,12 @@ a:hover {
 .filter-toggle {
   display: none; /* hidden on desktop */
 }
+.filter-badge {
+  color: var(--accent-lime);
+  font-size: 0.7rem;
+  margin-left: 0.15rem;
+  opacity: 0.7;
+}
 
 /* --- Reset Filters Button --- */
 .btn-reset-filters {

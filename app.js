@@ -284,6 +284,14 @@ function applyFilters() {
     btnResetFilters.classList.add('hidden');
   }
 
+  var filterBadge = document.getElementById('filter-badge');
+  if (activeCount > 0) {
+    filterBadge.textContent = '(' + activeCount + ')';
+    filterBadge.classList.remove('hidden');
+  } else {
+    filterBadge.classList.add('hidden');
+  }
+
   renderEvents(filteredEvents);
 }
 
