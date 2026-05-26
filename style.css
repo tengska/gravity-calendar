@@ -683,6 +683,11 @@ a:hover {
   font-size: 0.7rem;
   margin-top: 0.3rem;
 }
+@media (max-width: 480px) {
+  .site-footer p {
+    font-size: 0.65rem;
+  }
+}
 
 /* --- List View --- */
 .events-grid.list-view {
