@@ -596,6 +596,8 @@ function createEventRow(event) {
       html += '<a href="' + event.resultsUrl + '" target="_blank" rel="noopener" class="row-btn-register row-btn-results">Tulokset</a>';
     } else if (event.status === 'cancelled') {
       html += '<span class="row-cancelled-label">Peruttu</span>';
+    } else if (event.websiteUrl) {
+      html += '<a href="' + event.websiteUrl + '" target="_blank" rel="noopener" class="row-btn-register">Lisätiedot</a>';
     } else {
       html += '<span class="row-action-empty"></span>';
     }
@@ -761,6 +763,20 @@ btnResetFilters.addEventListener('click', resetFilters);
 emptyResetLink.addEventListener('click', function(e) {
   e.preventDefault();
   resetFilters();
+});
+
+// Logo = home (reset filters, default view, scroll to top)
+document.querySelector('.logo').addEventListener('click', function(e) {
+  e.preventDefault();
+  resetFilters();
+  if (currentView !== 'cards') {
+    currentView = 'cards';
+    viewCardsBtn.classList.add('active');
+    viewListBtn.classList.remove('active');
+    viewMapBtn.classList.remove('active');
+    renderEvents(filteredEvents);
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 // View toggle

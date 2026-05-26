@@ -67,6 +67,8 @@ a:hover {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.25rem;
+  text-decoration: none;
+  color: inherit;
 }
 .logo-icon {
   font-size: 1.8rem;
@@ -943,6 +945,7 @@ a:hover {
   cursor: pointer;
   transition: all 0.2s;
   align-self: flex-end;
+  margin-left: auto;
   white-space: nowrap;
 }
 .btn-reset-filters:hover {
@@ -1188,13 +1191,20 @@ a:hover {
     font-size: 1rem;
     transition: transform 0.2s;
   }
-  /* Collapsed by default on mobile — expanded class shows it */
+  /* Collapsed by default on mobile — animated expand/collapse */
   .filters-inner {
-    display: none;
-  }
-  .filters-section.expanded .filters-inner {
     display: flex;
     flex-direction: column;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+  }
+  .filters-section.expanded .filters-inner {
+    max-height: 600px;
+    overflow: visible;
+  }
+  .btn-reset-filters {
+    width: 100%;
   }
 
   /* On mobile show only cards and map toggles */
