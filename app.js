@@ -14,6 +14,7 @@ let allEvents = [];        // All events loaded from JSON
 let filteredEvents = [];   // Events after applying filters
 let weatherCache = {};     // Cache weather responses to avoid duplicate API calls
 let currentView = 'cards'; // Current view mode: 'cards', 'list', or 'map'
+let currentSegment = 'all'; // Content segment: 'races', 'events', or 'all'
 let weatherQueue = [];     // Queue for staggered weather mini loading
 let leafletMap = null;     // Leaflet map instance
 let mapMarkers = [];       // Map marker layer group
@@ -240,6 +241,8 @@ function applyFilters() {
   var search     = filterSearch.value.toLowerCase().trim();
 
   filteredEvents = allEvents.filter(function(event) {
+    if (currentSegment === 'races' && event.competition === false) return false;
+    if (currentSegment === 'events' && event.competition !== false) return false;
     if (series.length > 0 && series.indexOf(event.series) === -1) return false;
     if (discipline.length > 0 && discipline.indexOf(event.discipline) === -1) return false;
     if (month.length > 0) {
@@ -270,6 +273,7 @@ function applyFilters() {
 
   // Show/hide reset button
   var activeCount = 0;
+  if (currentSegment !== 'all') activeCount++;
   if (series.length > 0)     activeCount++;
   if (discipline.length > 0) activeCount++;
   if (month.length > 0)      activeCount++;
@@ -284,12 +288,16 @@ function applyFilters() {
     btnResetFilters.classList.add('hidden');
   }
 
+  // Update mobile filter toggle text with segment name
+  var segmentLabels = { races: 'Kisat', events: 'Tapahtumat', all: 'Kaikki' };
+  var toggleLabel = filterToggleBtn.querySelector('span');
   var filterBadge = document.getElementById('filter-badge');
-  if (activeCount > 0) {
-    filterBadge.textContent = '(' + activeCount + ')';
-    filterBadge.classList.remove('hidden');
-  } else {
-    filterBadge.classList.add('hidden');
+  var segmentSuffix = currentSegment !== 'all' ? ' · ' + segmentLabels[currentSegment] : '';
+  var badgeText = activeCount > 0 ? ' (' + activeCount + ')' : '';
+  toggleLabel.innerHTML = 'Suodattimet' + (activeCount > 0 ? ' <span class="filter-badge" id="filter-badge">' + badgeText + '</span>' : '') + segmentSuffix;
+  if (activeCount === 0) {
+    filterBadge = document.getElementById('filter-badge');
+    if (filterBadge) filterBadge.classList.add('hidden');
   }
 
   renderEvents(filteredEvents);
@@ -711,13 +719,45 @@ function resetFilters() {
   });
   filterSort.value = 'date-asc';
   filterSearch.value = '';
+  setSegment('all');
   applyFilters();
+}
+
+function setSegment(value) {
+  currentSegment = value;
+  // Sync all segment buttons (mobile + desktop)
+  document.querySelectorAll('.segment-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.segment === value);
+  });
+  var section = document.getElementById('filters-section');
+  section.classList.remove('segment-events', 'segment-races');
+  if (value === 'events') {
+    section.classList.add('segment-events');
+    document.querySelectorAll('#filter-series .multi-select-option.checked').forEach(function(el) {
+      el.classList.remove('checked');
+    });
+    updateTriggerText('filter-series');
+    document.querySelectorAll('#filter-discipline .multi-select-option.checked').forEach(function(el) {
+      el.classList.remove('checked');
+    });
+    updateTriggerText('filter-discipline');
+  } else if (value === 'races') {
+    section.classList.add('segment-races');
+  }
 }
 
 
 // ============================================
 // 9. EVENT LISTENERS (dynamically added!)
 // ============================================
+
+// Segment control: switch between races/events/all
+document.querySelectorAll('.segment-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    setSegment(btn.dataset.segment);
+    applyFilters();
+  });
+});
 
 // Multi-select: open/close on trigger click, option toggle on option click
 Object.keys(multiSelectDefaults).forEach(function(id) {

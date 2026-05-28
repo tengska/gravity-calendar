@@ -102,6 +102,56 @@ a.logo:active {
   50% { opacity: 0.6; }
 }
 
+/* --- Content Segment Control --- */
+.content-segment {
+  display: inline-flex;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+/* Desktop: show inline segment, hide mobile segment */
+.content-segment-mobile {
+  display: none;
+}
+.content-segment-desktop {
+  display: inline-flex;
+}
+.filter-group-segment {
+  min-width: auto !important;
+  flex: 0 0 auto;
+}
+.segment-btn {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.55rem 0.85rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  border-right: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.segment-btn:last-child {
+  border-right: none;
+}
+.segment-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
+}
+.segment-btn.active {
+  background: var(--accent-lime);
+  color: var(--bg-dark);
+}
+
+/* Hide Sarja and Laji filters when Tapahtumat segment is active */
+.filters-section.segment-events .filter-group-series,
+.filters-section.segment-events .filter-group-discipline {
+  display: none;
+}
+
 /* --- Filters --- */
 .filters-section {
   padding: 1.5rem;
@@ -261,6 +311,33 @@ a.logo:active {
   font-size: 0.8rem;
   color: var(--text-muted);
   font-weight: 500;
+}
+
+/* --- Results Controls (sort + view toggle) --- */
+.results-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.sort-select {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  padding: 0.3rem 1.8rem 0.3rem 0.5rem;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a9a8e' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  transition: border-color 0.2s;
+}
+.sort-select:focus {
+  border-color: var(--accent-lime);
 }
 
 /* --- View Toggle --- */
@@ -1167,6 +1244,25 @@ a.logo:active {
   /* Tighter filter bar on mobile to save screen space */
   .filters-section {
     padding: 0.5rem 1rem;
+  }
+
+  /* Segmented control: show mobile version, hide desktop version */
+  .content-segment-mobile {
+    display: flex;
+    width: calc(100% - 2rem);
+    margin: 0.5rem 1rem;
+  }
+  .content-segment-desktop {
+    display: none !important;
+  }
+  .filter-group-segment {
+    display: none !important;
+  }
+  .content-segment-mobile .segment-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.5rem;
   }
 
   /* Filter toggle button — visible on mobile */
