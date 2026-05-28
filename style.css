@@ -804,7 +804,7 @@ a.logo:active {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   border-bottom: 1px solid var(--border-subtle);
   margin-bottom: 0.1rem;
 }
