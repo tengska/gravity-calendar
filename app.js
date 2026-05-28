@@ -233,6 +233,13 @@ function updateTriggerText(containerId) {
  * Applies all active filters to the events array and re-renders.
  */
 function applyFilters() {
+  // Guard: if filters panel is open on mobile, suppress the scroll
+  // auto-collapse while re-render causes layout shifts
+  if (window.innerWidth <= 600 && filtersSection.classList.contains('expanded')) {
+    filterExpandedByUser = true;
+    clearTimeout(filterGuardTimer);
+    filterGuardTimer = setTimeout(function() { filterExpandedByUser = false; }, 500);
+  }
   var series     = getSelectedValues('filter-series');
   var discipline = getSelectedValues('filter-discipline');
   var month      = getSelectedValues('filter-month');
@@ -846,13 +853,18 @@ viewListBtn.addEventListener('click', function() {
 // which fires a scroll event). The flag is cleared after a short delay
 // so normal scroll-to-collapse resumes once the layout settles.
 var filterExpandedByUser = false;
+var filterGuardTimer = null;
 filterToggleBtn.addEventListener('click', function() {
   var willExpand = !filtersSection.classList.contains('expanded');
   filtersSection.classList.toggle('expanded');
   filterToggleIcon.textContent = willExpand ? '▴' : '▾';
   if (willExpand) {
     filterExpandedByUser = true;
-    setTimeout(function() { filterExpandedByUser = false; }, 500);
+    clearTimeout(filterGuardTimer);
+    filterGuardTimer = setTimeout(function() { filterExpandedByUser = false; }, 500);
+  } else {
+    filterExpandedByUser = false;
+    clearTimeout(filterGuardTimer);
   }
 });
 
