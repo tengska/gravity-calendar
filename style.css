@@ -1330,7 +1330,10 @@ a.logo:active {
     flex-direction: column;
     width: 100%;
     min-width: 100%;
-    gap: 0.75rem;
+    gap: 0.5rem;
+  }
+  .filter-tail .btn-reset-filters {
+    margin-top: 0.5rem;
   }
   .filter-tail .filter-search {
     min-width: 100%;
