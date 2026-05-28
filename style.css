@@ -105,6 +105,7 @@ a.logo:active {
 /* --- Content Segment Control --- */
 .content-segment {
   display: inline-flex;
+  align-items: stretch;
   background: var(--bg-card);
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
@@ -123,9 +124,9 @@ a.logo:active {
 }
 .segment-btn {
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  padding: 0.55rem 0.85rem;
+  padding: calc(0.5rem + 1px) 0.7rem;
   background: transparent;
   color: var(--text-secondary);
   border: none;
@@ -164,10 +165,10 @@ a.logo:active {
   -webkit-backdrop-filter: blur(12px);
 }
 .filters-inner {
-  max-width: 1100px;
+  max-width: 1440px;
   margin: 0 auto;
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
   align-items: flex-end;
 }
@@ -176,7 +177,7 @@ a.logo:active {
   flex-direction: column;
   gap: 0.25rem;
   flex: 1;
-  min-width: 140px;
+  min-width: 130px;
 }
 .filter-group label {
   font-size: 0.7rem;
@@ -188,8 +189,8 @@ a.logo:active {
 .filter-group select,
 .filter-group input {
   font-family: var(--font-body);
-  font-size: 0.85rem;
-  padding: 0.6rem 0.75rem;
+  font-size: 0.8rem;
+  padding: 0.5rem 0.6rem;
   background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border-subtle);
@@ -210,7 +211,8 @@ a.logo:active {
   border-color: var(--accent-lime);
 }
 .filter-search {
-  flex: 1.5;
+  flex: 1;
+  min-width: 160px;
 }
 
 /* --- Multi-Select Dropdown --- */
@@ -219,8 +221,8 @@ a.logo:active {
 }
 .multi-select-trigger {
   font-family: var(--font-body);
-  font-size: 0.85rem;
-  padding: 0.6rem 2rem 0.6rem 0.75rem;
+  font-size: 0.8rem;
+  padding: 0.5rem 1.8rem 0.5rem 0.6rem;
   background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border-subtle);
@@ -1013,11 +1015,13 @@ a.logo:active {
 /* --- Reset Filters Button --- */
 .btn-reset-filters {
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 0.6rem 0.9rem;
+  padding: 0.5rem 0.7rem;
+  flex-shrink: 0;
+  align-self: flex-end;
   background: rgba(255, 71, 87, 0.1);
   color: var(--accent-red);
   border: 1px solid rgba(255, 71, 87, 0.3);
