@@ -1324,6 +1324,11 @@ a.logo:active {
   }
   .filter-tail {
     flex-direction: column;
+    width: 100%;
+    min-width: 100%;
+  }
+  .filter-tail .filter-search {
+    min-width: 100%;
   }
   .btn-reset-filters {
     width: 100%;
