@@ -214,9 +214,16 @@ a.logo:active {
 .filter-group input:focus {
   border-color: var(--accent-lime);
 }
+.filter-tail {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  flex: 1;
+  min-width: 200px;
+}
 .filter-search {
   flex: 1;
-  min-width: 160px;
+  min-width: 0;
 }
 
 /* --- Multi-Select Dropdown --- */
@@ -1309,6 +1316,9 @@ a.logo:active {
   .filters-section.expanded .filters-inner {
     max-height: 600px;
     overflow: visible;
+  }
+  .filter-tail {
+    flex-direction: column;
   }
   .btn-reset-filters {
     width: 100%;
