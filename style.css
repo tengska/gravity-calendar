@@ -361,7 +361,12 @@ a.logo:active {
 .view-btn {
   font-family: var(--font-body);
   font-size: 1rem;
-  padding: 0.3rem 0.55rem;
+  padding: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: var(--bg-card);
   color: var(--text-muted);
   border: 1px solid var(--border-subtle);
