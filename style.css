@@ -102,9 +102,59 @@ a.logo:active {
   50% { opacity: 0.6; }
 }
 
+/* --- Content Segment Control --- */
+.content-segment {
+  display: inline-flex;
+  align-items: stretch;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+/* Desktop: show inline segment, hide mobile segment */
+.content-segment-mobile {
+  display: none;
+}
+.content-segment-desktop {
+  display: inline-flex;
+}
+.filter-group-segment {
+  min-width: auto !important;
+}
+.segment-btn {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: calc(0.5rem + 1px) 0.7rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  border-right: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.segment-btn:last-child {
+  border-right: none;
+}
+.segment-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
+}
+.segment-btn.active {
+  background: var(--accent-lime);
+  color: var(--bg-dark);
+}
+
+/* Hide Sarja and Laji filters when Tapahtumat segment is active */
+.filters-section.segment-events .filter-group-series,
+.filters-section.segment-events .filter-group-discipline {
+  display: none;
+}
+
 /* --- Filters --- */
 .filters-section {
-  padding: 1.5rem;
+  padding: 1rem 1.5rem 1.25rem;
   border-bottom: 1px solid var(--border-subtle);
   position: sticky;
   top: 0;
@@ -114,19 +164,24 @@ a.logo:active {
   -webkit-backdrop-filter: blur(12px);
 }
 .filters-inner {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
   align-items: flex-end;
 }
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.15rem;
   flex: 1;
-  min-width: 140px;
+  min-width: 130px;
+}
+.filter-group.filter-group-segment {
+  flex: 0 0 auto;
+  min-width: auto;
+  align-items: flex-start;
 }
 .filter-group label {
   font-size: 0.7rem;
@@ -138,8 +193,8 @@ a.logo:active {
 .filter-group select,
 .filter-group input {
   font-family: var(--font-body);
-  font-size: 0.85rem;
-  padding: 0.6rem 0.75rem;
+  font-size: 0.8rem;
+  padding: 0.5rem 0.6rem;
   background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border-subtle);
@@ -159,8 +214,16 @@ a.logo:active {
 .filter-group input:focus {
   border-color: var(--accent-lime);
 }
+.filter-tail {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  flex: 1;
+  min-width: 200px;
+}
 .filter-search {
-  flex: 1.5;
+  flex: 1;
+  min-width: 0;
 }
 
 /* --- Multi-Select Dropdown --- */
@@ -169,8 +232,8 @@ a.logo:active {
 }
 .multi-select-trigger {
   font-family: var(--font-body);
-  font-size: 0.85rem;
-  padding: 0.6rem 2rem 0.6rem 0.75rem;
+  font-size: 0.8rem;
+  padding: 0.5rem 1.8rem 0.5rem 0.6rem;
   background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border-subtle);
@@ -263,6 +326,33 @@ a.logo:active {
   font-weight: 500;
 }
 
+/* --- Results Controls (sort + view toggle) --- */
+.results-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.sort-select {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  padding: 0.3rem 1.8rem 0.3rem 0.5rem;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a9a8e' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  transition: border-color 0.2s;
+}
+.sort-select:focus {
+  border-color: var(--accent-lime);
+}
+
 /* --- View Toggle --- */
 .view-toggle {
   display: flex;
@@ -271,7 +361,12 @@ a.logo:active {
 .view-btn {
   font-family: var(--font-body);
   font-size: 1rem;
-  padding: 0.3rem 0.55rem;
+  padding: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: var(--bg-card);
   color: var(--text-muted);
   border: 1px solid var(--border-subtle);
@@ -709,7 +804,7 @@ a.logo:active {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   border-bottom: 1px solid var(--border-subtle);
   margin-bottom: 0.1rem;
 }
@@ -936,11 +1031,13 @@ a.logo:active {
 /* --- Reset Filters Button --- */
 .btn-reset-filters {
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 0.6rem 0.9rem;
+  padding: 0.5rem 0.7rem;
+  flex-shrink: 0;
+  align-self: flex-end;
   background: rgba(255, 71, 87, 0.1);
   color: var(--accent-red);
   border: 1px solid rgba(255, 71, 87, 0.3);
@@ -1169,6 +1266,25 @@ a.logo:active {
     padding: 0.5rem 1rem;
   }
 
+  /* Segmented control: show mobile version, hide desktop version */
+  .content-segment-mobile {
+    display: flex;
+    width: calc(100% - 2rem);
+    margin: 0.5rem 1rem;
+  }
+  .content-segment-desktop {
+    display: none !important;
+  }
+  .filter-group-segment {
+    display: none !important;
+  }
+  .content-segment-mobile .segment-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.5rem;
+  }
+
   /* Filter toggle button — visible on mobile */
   .filter-toggle {
     display: flex;
@@ -1205,6 +1321,9 @@ a.logo:active {
   .filters-section.expanded .filters-inner {
     max-height: 600px;
     overflow: visible;
+  }
+  .filter-tail {
+    flex-direction: column;
   }
   .btn-reset-filters {
     width: 100%;

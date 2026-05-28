@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gravity Calendar — Suomen Gravity MTB Tapahtumat 2026</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d0f0e'/%3E%3Cpath d='M16 6L6 24h20z' fill='%237ec850'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d0f0e'/%3E%3Cpath d='M16 26L6 8h20z' fill='%237ec850'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
   <!-- Leaflet map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
@@ -27,7 +27,14 @@
     </div>
   </header>
 
-  <!-- ===== FILTERS ===== -->
+  <!-- ===== MOBILE SEGMENT (scrolls away) ===== -->
+  <div class="content-segment content-segment-mobile" id="content-segment-mobile">
+    <button class="segment-btn" data-segment="races">Kisat</button>
+    <button class="segment-btn" data-segment="events">Tapahtumat</button>
+    <button class="segment-btn active" data-segment="all">Kaikki</button>
+  </div>
+
+  <!-- ===== FILTERS (sticky) ===== -->
   <section class="filters-section" id="filters-section">
     <!-- Mobile-only toggle — collapses/expands the filter bar -->
     <button class="filter-toggle" id="filter-toggle">
@@ -36,8 +43,18 @@
     </button>
     <div class="filters-inner">
 
+      <!-- Desktop-only: segmented control inline with filters -->
+      <div class="filter-group filter-group-segment">
+        <label>Näytä</label>
+        <div class="content-segment content-segment-desktop" id="content-segment-desktop">
+          <button class="segment-btn" data-segment="races">Kisat</button>
+          <button class="segment-btn" data-segment="events">Tapahtumat</button>
+          <button class="segment-btn active" data-segment="all">Kaikki</button>
+        </div>
+      </div>
+
       <!-- Series filter -->
-      <div class="filter-group">
+      <div class="filter-group filter-group-series">
         <label>Sarja</label>
         <div class="multi-select" id="filter-series">
           <button class="multi-select-trigger" type="button">Kaikki sarjat</button>
@@ -45,13 +62,12 @@
             <div class="multi-select-option" data-value="Suomi DH Cup" data-short="DH Cup">Suomi DH Cup</div>
             <div class="multi-select-option" data-value="Finnish Enduro Cup" data-short="FEC">Finnish Enduro Cup</div>
             <div class="multi-select-option" data-value="MTB Rally" data-short="MTB Rally">MTB Rally</div>
-            <div class="multi-select-option" data-value="Tapahtumat/Muut" data-short="Muut">Tapahtumat/Muut</div>
           </div>
         </div>
       </div>
 
       <!-- Discipline filter -->
-      <div class="filter-group">
+      <div class="filter-group filter-group-discipline">
         <label>Laji</label>
         <div class="multi-select" id="filter-discipline">
           <button class="multi-select-trigger" type="button">Kaikki lajit</button>
@@ -93,24 +109,14 @@
         </div>
       </div>
 
-      <!-- Sort -->
-      <div class="filter-group">
-        <label for="filter-sort">Järjestys</label>
-        <select id="filter-sort">
-          <option value="date-asc">Päivämäärä ↑</option>
-          <option value="date-desc">Päivämäärä ↓</option>
-          <option value="series">Sarja</option>
-        </select>
+      <!-- Search + Reset (wrap together) -->
+      <div class="filter-tail">
+        <div class="filter-group filter-search">
+          <label for="filter-search">Haku</label>
+          <input type="text" id="filter-search" placeholder="Paikka, nimi...">
+        </div>
+        <button class="btn-reset-filters hidden" id="btn-reset-filters">Tyhjennä</button>
       </div>
-
-      <!-- Search -->
-      <div class="filter-group filter-search">
-        <label for="filter-search">Haku</label>
-        <input type="text" id="filter-search" placeholder="Paikka, nimi...">
-      </div>
-
-      <!-- Reset filters -->
-      <button class="btn-reset-filters hidden" id="btn-reset-filters">Tyhjennä</button>
 
     </div>
   </section>
@@ -118,10 +124,17 @@
   <!-- ===== EVENTS COUNT & VIEW TOGGLE ===== -->
   <section class="results-info">
     <p id="results-count"></p>
-    <div class="view-toggle">
-      <button class="view-btn active" id="view-cards" title="Korttinäkymä">▦</button>
-      <button class="view-btn" id="view-list" title="Listanäkymä">☰</button>
-      <button class="view-btn" id="view-map" title="Karttanäkymä">📍</button>
+    <div class="results-controls">
+      <select id="filter-sort" class="sort-select" title="Järjestys">
+        <option value="date-asc">Päivämäärä ↑</option>
+        <option value="date-desc">Päivämäärä ↓</option>
+        <option value="series">Sarja</option>
+      </select>
+      <div class="view-toggle">
+        <button class="view-btn active" id="view-cards" title="Korttinäkymä">▦</button>
+        <button class="view-btn" id="view-list" title="Listanäkymä">☰</button>
+        <button class="view-btn" id="view-map" title="Karttanäkymä"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><ellipse cx="8" cy="8" rx="3" ry="6.5"/><line x1="1.5" y1="8" x2="14.5" y2="8"/></svg></button>
+      </div>
     </div>
   </section>
 
