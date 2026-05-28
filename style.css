@@ -120,8 +120,6 @@ a.logo:active {
 }
 .filter-group-segment {
   min-width: auto !important;
-  flex: 0 0 auto;
-  align-items: flex-start;
 }
 .segment-btn {
   font-family: var(--font-body);
@@ -179,6 +177,11 @@ a.logo:active {
   gap: 0.25rem;
   flex: 1;
   min-width: 130px;
+}
+.filter-group.filter-group-segment {
+  flex: 0 0 auto;
+  min-width: auto;
+  align-items: flex-start;
 }
 .filter-group label {
   font-size: 0.7rem;
