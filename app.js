@@ -396,6 +396,7 @@ function createEventCard(event) {
   if (event.series === 'Suomi DH Cup') seriesClass = 'series-dh';
   if (event.series === 'Finnish Enduro Cup') seriesClass = 'series-enduro';
   if (event.series === 'Tapahtumat/Muut') seriesClass = 'series-events';
+  if (event.series === 'Muu') seriesClass = 'series-muu';
 
   var dateDisplay = formatDateRange(event.dateStart, event.dateEnd);
   var countdown = getCountdown(event.dateStart, event.status);
@@ -581,6 +582,7 @@ function createEventRow(event) {
   if (event.series === 'Suomi DH Cup') seriesClass = 'series-dh';
   if (event.series === 'Finnish Enduro Cup') seriesClass = 'series-enduro';
   if (event.series === 'Tapahtumat/Muut') seriesClass = 'series-events';
+  if (event.series === 'Muu') seriesClass = 'series-muu';
 
   var dateDisplay = formatDateRange(event.dateStart, event.dateEnd);
   var html = '';
@@ -872,6 +874,7 @@ function buildEventPopupBlock(event) {
   if (event.series === 'Suomi DH Cup') seriesClass = 'series-dh';
   if (event.series === 'Finnish Enduro Cup') seriesClass = 'series-enduro';
   if (event.series === 'Tapahtumat/Muut') seriesClass = 'series-events';
+  if (event.series === 'Muu') seriesClass = 'series-muu';
 
   var html = '<div class="map-popup-event">'
     + '<div class="map-popup-series card-series ' + seriesClass + '">' + event.seriesShort + '</div>'
