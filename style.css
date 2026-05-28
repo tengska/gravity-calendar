@@ -1324,7 +1324,8 @@ a.logo:active {
   }
   .filters-section.expanded .filters-inner {
     max-height: 600px;
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: visible;
   }
   .filter-tail {
     flex-direction: column;
