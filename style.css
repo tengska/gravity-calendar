@@ -121,6 +121,7 @@ a.logo:active {
 .filter-group-segment {
   min-width: auto !important;
   flex: 0 0 auto;
+  align-items: flex-start;
 }
 .segment-btn {
   font-family: var(--font-body);
