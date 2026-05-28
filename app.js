@@ -396,6 +396,7 @@ function createEventCard(event) {
   if (event.series === 'Suomi DH Cup') seriesClass = 'series-dh';
   if (event.series === 'Finnish Enduro Cup') seriesClass = 'series-enduro';
   if (event.series === 'Tapahtumat/Muut') seriesClass = 'series-events';
+  if (event.series === 'Muu') seriesClass = 'series-muu';
 
   var dateDisplay = formatDateRange(event.dateStart, event.dateEnd);
   var countdown = getCountdown(event.dateStart, event.status);
@@ -581,6 +582,7 @@ function createEventRow(event) {
   if (event.series === 'Suomi DH Cup') seriesClass = 'series-dh';
   if (event.series === 'Finnish Enduro Cup') seriesClass = 'series-enduro';
   if (event.series === 'Tapahtumat/Muut') seriesClass = 'series-events';
+  if (event.series === 'Muu') seriesClass = 'series-muu';
 
   var dateDisplay = formatDateRange(event.dateStart, event.dateEnd);
   var html = '';
@@ -839,9 +841,19 @@ viewListBtn.addEventListener('click', function() {
 });
 
 // Mobile filter toggle
+// filterExpandedByUser prevents the scroll handler from immediately
+// collapsing filters after the user opens them (expanding shifts layout
+// which fires a scroll event). The flag is cleared after a short delay
+// so normal scroll-to-collapse resumes once the layout settles.
+var filterExpandedByUser = false;
 filterToggleBtn.addEventListener('click', function() {
+  var willExpand = !filtersSection.classList.contains('expanded');
   filtersSection.classList.toggle('expanded');
-  filterToggleIcon.textContent = filtersSection.classList.contains('expanded') ? '▴' : '▾';
+  filterToggleIcon.textContent = willExpand ? '▴' : '▾';
+  if (willExpand) {
+    filterExpandedByUser = true;
+    setTimeout(function() { filterExpandedByUser = false; }, 500);
+  }
 });
 
 // Modal close
@@ -872,6 +884,7 @@ function buildEventPopupBlock(event) {
   if (event.series === 'Suomi DH Cup') seriesClass = 'series-dh';
   if (event.series === 'Finnish Enduro Cup') seriesClass = 'series-enduro';
   if (event.series === 'Tapahtumat/Muut') seriesClass = 'series-events';
+  if (event.series === 'Muu') seriesClass = 'series-muu';
 
   var html = '<div class="map-popup-event">'
     + '<div class="map-popup-series card-series ' + seriesClass + '">' + event.seriesShort + '</div>'
@@ -988,6 +1001,7 @@ function renderMap(events) {
 
   window.addEventListener('scroll', function() {
     if (window.innerWidth > 600) return;
+    if (filterExpandedByUser) return;
     if (!ticking) {
       requestAnimationFrame(function() {
         if (window.scrollY > 120 && filtersSection.classList.contains('expanded')) {

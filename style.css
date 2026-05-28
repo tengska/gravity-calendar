@@ -495,6 +495,10 @@ a.logo:active {
   background: rgba(155, 111, 192, 0.15);
   color: var(--accent-purple);
 }
+.card-series.series-muu {
+  background: rgba(100, 200, 180, 0.15);
+  color: #64c8b4;
+}
 
 /* Status tag */
 .card-status {
@@ -1320,10 +1324,20 @@ a.logo:active {
   }
   .filters-section.expanded .filters-inner {
     max-height: 600px;
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: visible;
   }
   .filter-tail {
     flex-direction: column;
+    width: 100%;
+    min-width: 100%;
+    gap: 0.5rem;
+  }
+  .filter-tail .btn-reset-filters {
+    margin-top: 0.5rem;
+  }
+  .filter-tail .filter-search {
+    min-width: 100%;
   }
   .btn-reset-filters {
     width: 100%;
