@@ -1086,12 +1086,14 @@ document.getElementById('suggest-form').addEventListener('submit', function(e) {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams(formData).toString()
-  }).then(function() {
+  }).then(function(response) {
+    if (!response.ok) throw new Error('HTTP ' + response.status);
     form.classList.add('hidden');
     suggestModal.querySelector('.form-title').classList.add('hidden');
     suggestModal.querySelector('.form-desc').classList.add('hidden');
     document.getElementById('suggest-success').classList.remove('hidden');
-  }).catch(function() {
+  }).catch(function(err) {
+    console.error('Form submit error:', err);
     alert('Lähetys epäonnistui. Yritä uudelleen.');
   });
 });
@@ -1104,12 +1106,14 @@ document.getElementById('feedback-form').addEventListener('submit', function(e) 
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams(formData).toString()
-  }).then(function() {
+  }).then(function(response) {
+    if (!response.ok) throw new Error('HTTP ' + response.status);
     form.classList.add('hidden');
     feedbackModal.querySelector('.form-title').classList.add('hidden');
     feedbackModal.querySelector('.form-desc').classList.add('hidden');
     document.getElementById('feedback-success').classList.remove('hidden');
-  }).catch(function() {
+  }).catch(function(err) {
+    console.error('Form submit error:', err);
     alert('Lähetys epäonnistui. Yritä uudelleen.');
   });
 });

@@ -16,6 +16,24 @@
 </head>
 <body>
 
+  <!-- Netlify form registration (hidden, ensures detection during build) -->
+  <form name="event-suggestion" netlify netlify-honeypot="bot-field" hidden>
+    <input name="form-name" type="hidden" value="event-suggestion">
+    <input name="bot-field">
+    <input name="series"><input name="discipline">
+    <input name="date-start"><input name="date-end">
+    <input name="name"><input name="location"><input name="city">
+    <input name="organizer"><input name="registration-url"><input name="url">
+    <textarea name="notes"></textarea>
+  </form>
+  <form name="feedback" netlify netlify-honeypot="bot-field" hidden>
+    <input name="form-name" type="hidden" value="feedback">
+    <input name="bot-field">
+    <input name="type">
+    <textarea name="message"></textarea>
+    <input name="email">
+  </form>
+
   <!-- ===== HEADER ===== -->
   <header class="site-header">
     <div class="header-inner">
@@ -179,7 +197,7 @@
       <button class="modal-close" id="suggest-modal-close">&times;</button>
       <h3 class="form-title">Ehdota tapahtumaa</h3>
       <p class="form-desc">Täytä tiedot niin lisäämme tapahtuman kalenteriin tarkistuksen jälkeen.</p>
-      <form name="event-suggestion" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="suggest-form">
+      <form name="event-suggestion" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" id="suggest-form">
         <input type="hidden" name="form-name" value="event-suggestion">
         <p class="hidden"><label>Älä täytä: <input name="bot-field"></label></p>
         <div class="form-row">
@@ -258,7 +276,7 @@
       <button class="modal-close" id="feedback-modal-close">&times;</button>
       <h3 class="form-title">Palaute</h3>
       <p class="form-desc">Bugi, idea tai muu palaute — kaikki on tervetullutta.</p>
-      <form name="feedback" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="feedback-form">
+      <form name="feedback" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" id="feedback-form">
         <input type="hidden" name="form-name" value="feedback">
         <p class="hidden"><label>Älä täytä: <input name="bot-field"></label></p>
         <div class="form-row">
