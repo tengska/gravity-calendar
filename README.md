@@ -72,26 +72,9 @@ Tapahtumatiedot ovat `events.json`-tiedostossa. Päivittäminen:
 1. Muokkaa `events.json` GitHubissa
 2. Netlify deployaa muutoksen automaattisesti
 
-## Itsearviointi
-
-Sovellus täyttää tehtävän vaatimukset:
-
-- AJAX-kutsu live REST API:lle (Open-Meteo sää-API)
-- Data tallennetaan muuttujaan ja valittu data näytetään
-- Viimeistelty ulkoasu CSS:llä (vaalea/tumma teema, animaatiot, responsiivinen)
-- Käyttöliittymässä on suodattimet, lajittelu ja hakukenttä uuden haun tekemiseen
-- Kaikki event handlerit lisätty dynaamisesti jQueryllä (`.on()`)
-- UI-kirjastot: Bootstrap 5, jQuery, Leaflet, AOS
-- Koodi on kommentoitu
-- Julkaistu [GitHubissa](https://github.com/tengska/gravity-calendar) ja [Netlifyssä](https://gravitycalendar.netlify.app/)
-
 ## Tekijä
 
 Karla Tengström
-
-## Projektiin käytetty aika
-
-~2 päivää
 
 ## Tulevaisuuden parannusehdotukset
 
