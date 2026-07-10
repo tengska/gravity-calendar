@@ -25,6 +25,8 @@
   --shadow-color: rgba(0, 0, 0, 0.5);
   --noise-1: rgba(180, 247, 74, 0.04);
   --noise-2: rgba(255, 123, 58, 0.03);
+  --bg-past-overlay: rgba(20, 25, 22, 0.6);
+  --border-past: rgba(86, 97, 89, 0.3);
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 18px;
@@ -50,6 +52,8 @@
   --shadow-color: rgba(24, 32, 25, 0.12);
   --noise-1: rgba(79, 156, 44, 0.05);
   --noise-2: rgba(184, 90, 46, 0.04);
+  --bg-past-overlay: rgba(220, 224, 218, 0.6);
+  --border-past: rgba(124, 136, 126, 0.3);
 }
 
 /* --- Nollaus ja perusasetukset --- */
@@ -478,13 +482,13 @@ a:hover {
 .event-card.cancelled .card-countdown { opacity: 0.55; }
 /* Mennyt tapahtuma — haalea */
 .event-card.past {
-  background: rgba(20, 25, 22, 0.6);
-  border-color: rgba(86, 97, 89, 0.3);
+  background: var(--bg-past-overlay);
+  border-color: var(--border-past);
 }
 .event-card.past::before { background: var(--text-muted); }
 .event-card.past:hover {
   border-color: var(--text-muted);
-  box-shadow: 0 4px 20px rgba(86, 97, 89, 0.1);
+  box-shadow: 0 4px 20px var(--shadow-color);
 }
 .event-card.past .card-name,
 .event-card.past .card-location,
@@ -718,8 +722,8 @@ a:hover {
 }
 .event-row.cancelled::before { background: var(--accent-red); }
 .event-row.past {
-  background: rgba(20, 25, 22, 0.6);
-  border-color: rgba(86, 97, 89, 0.3);
+  background: var(--bg-past-overlay);
+  border-color: var(--border-past);
 }
 .event-row.past::before { background: var(--text-muted); }
 
