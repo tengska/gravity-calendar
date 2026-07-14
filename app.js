@@ -77,14 +77,19 @@ function setTheme(theme) {
   var isLight = theme === 'light';
   var newTitle = isLight ? 'Tumma teema' : 'Vaalea teema';
   $('#theme-toggle-icon').attr('class', isLight ? 'bi bi-moon-stars-fill' : 'bi bi-sun-fill');
-  var toggleEl = $('#theme-toggle').attr('aria-label', isLight ? 'Vaihda tummaan teemaan' : 'Vaihda vaaleaan teemaan')
-                     .attr('title', newTitle)[0];
+  var toggleEl = $('#theme-toggle').attr('aria-label', isLight ? 'Vaihda tummaan teemaan' : 'Vaihda vaaleaan teemaan')[0];
 
-  // Bootstrap-tooltip säilöö otsikon alustushetkellä, joten se pitää
-  // päivittää erikseen — pelkkä title-attribuutin vaihto ei riitä.
+  // Bootstrap-tooltip säilöö otsikon alustushetkellä data-bs-original-title
+  // -attribuuttiin ja poistaa title-attribuutin (jotta selaimen oma
+  // tooltip ei näy Bootstrap-tooltipin päällä). Jos tooltip on jo
+  // alustettu, päivitetään vain sen sisältö — title-attribuuttia EI saa
+  // asettaa uudelleen, se toisi selaimen natiivin tooltipin takaisin.
   var tooltip = bootstrap.Tooltip.getInstance(toggleEl);
   if (tooltip) {
+    tooltip._config.title = newTitle;
     tooltip.setContent({ '.tooltip-inner': newTitle });
+  } else {
+    toggleEl.setAttribute('title', newTitle);
   }
 }
 
