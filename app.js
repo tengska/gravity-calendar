@@ -75,9 +75,17 @@ function setTheme(theme) {
   document.documentElement.setAttribute('data-bs-theme', theme);
   localStorage.setItem('gc-theme', theme);
   var isLight = theme === 'light';
+  var newTitle = isLight ? 'Tumma teema' : 'Vaalea teema';
   $('#theme-toggle-icon').attr('class', isLight ? 'bi bi-moon-stars-fill' : 'bi bi-sun-fill');
-  $('#theme-toggle').attr('aria-label', isLight ? 'Vaihda tummaan teemaan' : 'Vaihda vaaleaan teemaan')
-                     .attr('title', isLight ? 'Tumma teema' : 'Vaalea teema');
+  var toggleEl = $('#theme-toggle').attr('aria-label', isLight ? 'Vaihda tummaan teemaan' : 'Vaihda vaaleaan teemaan')
+                     .attr('title', newTitle)[0];
+
+  // Bootstrap-tooltip säilöö otsikon alustushetkellä, joten se pitää
+  // päivittää erikseen — pelkkä title-attribuutin vaihto ei riitä.
+  var tooltip = bootstrap.Tooltip.getInstance(toggleEl);
+  if (tooltip) {
+    tooltip.setContent({ '.tooltip-inner': newTitle });
+  }
 }
 
 /**
